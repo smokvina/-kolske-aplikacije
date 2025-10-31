@@ -37,7 +37,7 @@ export const logChatMessage = async (sender: 'user' | 'bot', text: string): Prom
        console.error('Failed to log chat message. Server responded with status:', response.status);
     }
   } catch (error) {
-    console.error('Error while sending chat log to Google Sheet:', error);
+    console.error('Error while sending chat log to Google Sheet. This is often a CORS or Google Apps Script deployment issue. Please ensure you have deployed the script correctly with "Who has access" set to "Anyone".', error);
   }
 };
 
@@ -69,7 +69,7 @@ export const logReport = async (category: string, description: string, hasImage:
        console.error('Failed to log report. Server responded with status:', response.status);
     }
   } catch (error) {
-    console.error('Error while sending report log to Google Sheet:', error);
+    console.error('Error while sending report log to Google Sheet. This is often a CORS or Google Apps Script deployment issue. Please ensure you have deployed the script correctly with "Who has access" set to "Anyone".', error);
   }
 };
 
@@ -77,6 +77,53 @@ export const logReport = async (category: string, description: string, hasImage:
 /*
   --- GOOGLE APPS SCRIPT CODE (for setup) ---
   --- Paste this code into Extensions > Apps Script in your Google Sheet ---
+
+  // ============================================================================================
+  //  VERY IMPORTANT: SETUP INSTRUCTIONS
+  // ============================================================================================
+  // To fix the "Failed to fetch" error, you MUST deploy this script correctly.
+  // Follow these steps exactly:
+  //
+  // 1. OPEN SCRIPT EDITOR:
+  //    In your Google Sheet, go to "Extensions" -> "Apps Script".
+  //
+  // 2. REPLACE CODE:
+  //    Delete all existing code in the editor and paste this entire script (including this comment block).
+  //
+  // 3. CREATE A NEW DEPLOYMENT:
+  //    - Click the blue "Deploy" button at the top right.
+  //    - Select "New deployment".
+  //
+  // 4. CONFIGURE THE WEB APP:
+  //    - Click the gear icon next to "Select type" and choose "Web app".
+  //    - In the "Description" field, you can write something like "School App Logger v2".
+  //    - For "Execute as", leave it as "Me (your@email.com)".
+  //    - For "Who has access", you MUST select "Anyone". This is the most common source of errors.
+  //
+  // 5. DEPLOY:
+  //    - Click the "Deploy" button.
+  //
+  // 6. AUTHORIZE:
+  //    - Google will ask you to authorize the script. Click "Authorize access".
+  //    - Choose your Google account.
+  //    - You may see a "Google hasn’t verified this app" screen. Click "Advanced", then "Go to (unsafe)". This is normal for your own scripts.
+  //    - Click "Allow" on the final permissions screen.
+  //
+  // 7. COPY THE URL:
+  //    - After deploying, a "Web app URL" will be shown. Copy this URL.
+  //
+  // 8. UPDATE CLIENT-SIDE CODE:
+  //    - Paste the copied URL into the `SCRIPT_URL` constant at the top of the `services/googleSheetsService.ts` file in your application code, replacing the old one.
+  // ============================================================================================
+
+
+  // Handles CORS preflight requests from browsers. This is essential to prevent "Failed to fetch" errors.
+  function doOptions(e) {
+    return ContentService.createTextOutput()
+      .addHeader('Access-Control-Allow-Origin', '*')
+      .addHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+      .addHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
 
   function doPost(e) {
     try {
@@ -111,14 +158,16 @@ export const logReport = async (category: string, description: string, hasImage:
         throw new Error("Invalid action parameter provided.");
       }
       
-      // Return a success response
+      // Return a success response with CORS header
       return ContentService.createTextOutput(JSON.stringify({ 'status': 'success', 'action': action }))
-        .setMimeType(ContentService.MimeType.JSON);
+        .setMimeType(ContentService.MimeType.JSON)
+        .addHeader('Access-Control-Allow-Origin', '*');
 
     } catch (error) {
-      // Return an error response
+      // Return an error response with CORS header
       return ContentService.createTextOutput(JSON.stringify({ 'status': 'error', 'message': error.message }))
-        .setMimeType(ContentService.MimeType.JSON);
+        .setMimeType(ContentService.MimeType.JSON)
+        .addHeader('Access-Control-Allow-Origin', '*');
     }
   }
 */

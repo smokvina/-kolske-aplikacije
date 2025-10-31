@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Card from '../components/Card';
 import { analyzeImage, suggestCategory } from '../services/geminiService';
 import { SparklesIcon, MicrophoneIcon } from '../components/Icons';
-import { GoogleGenAI, LiveSession, Modality, Blob } from '@google/genai';
+// FIX: Removed 'LiveSession' from import as it is not an exported member of '@google/genai'.
+import { GoogleGenAI, Modality, Blob } from '@google/genai';
 import { logReport } from '../services/googleSheetsService';
 
 // Helper functions for Live API audio encoding
@@ -25,6 +26,13 @@ function createBlob(data: Float32Array): Blob {
     data: encode(new Uint8Array(int16.buffer)),
     mimeType: 'audio/pcm;rate=16000',
   };
+}
+
+// FIX: Defined a local LiveSession interface based on its usage in the component,
+// since it's not exported from the '@google/genai' library.
+interface LiveSession {
+  close(): void;
+  sendRealtimeInput(input: { media: Blob }): void;
 }
 
 const reportCategories = [

@@ -23,17 +23,20 @@ export interface ChatMessage {
 
 export interface GroundingChunk {
   web?: {
-    uri: string;
-    title: string;
+    // FIX: Made uri and title optional to align with Gemini API response, fixing a type error.
+    uri?: string;
+    title?: string;
   };
   maps?: {
-    uri: string;
-    title: string;
+    // FIX: Made uri and title optional to align with Gemini API response, fixing a type error.
+    uri?: string;
+    title?: string;
+    // FIX: Corrected the type of `placeAnswerSources` from an array of objects to a single object to align with the Gemini API's response structure.
     placeAnswerSources?: {
       reviewSnippets: {
         uri: string,
         reviewText: string
       }[];
-    }[]
+    }
   }
 }
