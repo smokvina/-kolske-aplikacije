@@ -9,7 +9,7 @@
 // 7. Click "Deploy".
 // 8. Authorize the script with your Google account when prompted.
 // 9. Copy the generated "Web app URL" and paste it into the SCRIPT_URL constant below.
-const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyosqlm4qwr8cZkw4SDrpj60qKmNYMQydFpgGx1l9MtAX5LIwvpPuz6iqOeG7Rtq1RaoQ/exec'; // IMPORTANT: Replace with your actual deployed script URL!
 
 /**
  * Logs a chat message to the Google Sheet via a Google Apps Script Web App.
@@ -17,8 +17,8 @@ const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
  * @param text - The content of the message.
  */
 export const logChatMessage = async (sender: 'user' | 'bot', text: string): Promise<void> => {
-  if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-    console.warn('Google Sheets logging is not configured. Please set the SCRIPT_URL in services/googleSheetsService.ts');
+  if (SCRIPT_URL.includes('...')) {
+    console.warn('Google Sheets logging is not configured. Please set the SCRIPT_URL in services/googleSheetsService.ts with your deployed Apps Script URL.');
     return;
   }
 
@@ -48,8 +48,8 @@ export const logChatMessage = async (sender: 'user' | 'bot', text: string): Prom
  * @param hasImage - Whether an image was attached.
  */
 export const logReport = async (category: string, description: string, hasImage: boolean): Promise<void> => {
-  if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-    console.warn('Google Sheets logging is not configured. Please set the SCRIPT_URL in services/googleSheetsService.ts');
+  if (SCRIPT_URL.includes('...')) {
+    console.warn('Google Sheets logging is not configured. Please set the SCRIPT_URL in services/googleSheetsService.ts with your deployed Apps Script URL.');
     return;
   }
   
@@ -97,9 +97,9 @@ export const logReport = async (category: string, description: string, hasImage:
         chatSheet.appendRow([params.timestamp, params.sender, params.text]);
 
       } else if (action === 'logReport') {
-        var reportSheet = spreadsheet.getSheetByName('Reports');
+        var reportSheet = spreadsheet.getSheetByName('Prijave');
         if (!reportSheet) {
-          reportSheet = spreadsheet.insertSheet('Reports');
+          reportSheet = spreadsheet.insertSheet('Prijave');
           // Set headers if the sheet is new
           reportSheet.appendRow(['Timestamp', 'Category', 'Description', 'Has Image']);
         }
