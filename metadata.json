@@ -1,0 +1,8 @@
+{
+  "name": "Prometna Škola Split Info",
+  "description": "An interactive communication hub for the Srednja tehnička prometna škola Split, providing news, schedules, communication tools, and AI-powered assistance for students, parents, and staff.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone"
+  ]
+}
