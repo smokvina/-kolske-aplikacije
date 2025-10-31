@@ -3,13 +3,8 @@
 // 1. Open the Google Sheet: https://docs.google.com/spreadsheets/d/1WEe2msu4ivar8wQqpU0H7CxLKE7liqaBh4_6JnmxvsQ/
 // 2. Go to Extensions > Apps Script.
 // 3. Paste the Apps Script code (provided at the bottom of this file) into the editor, replacing any existing code.
-// 4. Click "Deploy" > "New deployment".
-// 5. For "Select type", choose "Web app".
-// 6. In the configuration, set "Who has access" to "Anyone".
-// 7. Click "Deploy".
-// 8. Authorize the script with your Google account when prompted.
-// 9. Copy the generated "Web app URL" and paste it into the SCRIPT_URL constant below.
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyosqlm4qwr8cZkw4SDrpj60qKmNYMQydFpgGx1l9MtAX5LIwvpPuz6iqOeG7Rtq1RaoQ/exec'; // IMPORTANT: Replace with your actual deployed script URL!
+// 4. Follow the NEW, detailed deployment instructions in the comment block at the bottom of this file.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRZhzHE7O3v3qgbpn-oGffTYfW-cbjOYKxU9M3FfkkeSdq1IDkYsG3juZyd-7QJ7FpVQ/exec'; // IMPORTANT: Replace with your actual deployed script URL!
 
 /**
  * Logs a chat message to the Google Sheet via a Google Apps Script Web App.
@@ -32,6 +27,7 @@ export const logChatMessage = async (sender: 'user' | 'bot', text: string): Prom
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       body: formData,
+      // No 'mode: cors' needed here, as the script handles it
     });
     if (!response.ok) {
        console.error('Failed to log chat message. Server responded with status:', response.status);
@@ -79,55 +75,67 @@ export const logReport = async (category: string, description: string, hasImage:
   --- Paste this code into Extensions > Apps Script in your Google Sheet ---
 
   // ============================================================================================
-  //  VERY IMPORTANT: SETUP INSTRUCTIONS
+  //  VERY IMPORTANT: SETUP INSTRUCTIONS (UPDATED)
   // ============================================================================================
-  // To fix the "Failed to fetch" error, you MUST deploy this script correctly.
+  // To fix the "Failed to fetch" (CORS) error, you MUST deploy this script correctly.
   // Follow these steps exactly:
   //
   // 1. OPEN SCRIPT EDITOR:
   //    In your Google Sheet, go to "Extensions" -> "Apps Script".
   //
   // 2. REPLACE CODE:
-  //    Delete all existing code in the editor and paste this entire script (including this comment block).
+  //    Delete all existing code in the editor and paste this entire script.
   //
-  // 3. CREATE A NEW DEPLOYMENT:
-  //    - Click the blue "Deploy" button at the top right.
-  //    - Select "New deployment".
+  // 3. SAVE THE SCRIPT:
+  //    Click the floppy disk icon (Save project).
   //
-  // 4. CONFIGURE THE WEB APP:
+  // --- A) If this is your FIRST time deploying: ---
+  //
+  // 4. CREATE A NEW DEPLOYMENT:
+  //    - Click the blue "Deploy" button -> "New deployment".
+  //
+  // 5. CONFIGURE THE WEB APP:
   //    - Click the gear icon next to "Select type" and choose "Web app".
-  //    - In the "Description" field, you can write something like "School App Logger v2".
-  //    - For "Execute as", leave it as "Me (your@email.com)".
-  //    - For "Who has access", you MUST select "Anyone". This is the most common source of errors.
+  //    - For "Who has access", you MUST select "Anyone". THIS IS THE MOST IMPORTANT STEP.
   //
-  // 5. DEPLOY:
-  //    - Click the "Deploy" button.
-  //
-  // 6. AUTHORIZE:
-  //    - Google will ask you to authorize the script. Click "Authorize access".
-  //    - Choose your Google account.
-  //    - You may see a "Google hasn’t verified this app" screen. Click "Advanced", then "Go to (unsafe)". This is normal for your own scripts.
-  //    - Click "Allow" on the final permissions screen.
+  // 6. DEPLOY & AUTHORIZE:
+  //    - Click "Deploy".
+  //    - Click "Authorize access" and follow the prompts to allow the script to run.
+  //      (You may need to click "Advanced" -> "Go to... (unsafe)"). This is normal.
   //
   // 7. COPY THE URL:
-  //    - After deploying, a "Web app URL" will be shown. Copy this URL.
+  //    - Copy the final "Web app URL".
+  //
+  // --- B) If you are UPDATING an existing deployment: ---
+  //
+  // 4. MANAGE DEPLOYMENTS:
+  //    - Click the blue "Deploy" button -> "Manage deployments".
+  //
+  // 5. EDIT THE DEPLOYMENT:
+  //    - Find your active deployment in the list and click the pencil icon (Edit).
+  //
+  // 6. CREATE A NEW VERSION:
+  //    - From the "Version" dropdown, select "New version". THIS IS A CRITICAL STEP.
+  //    - You do NOT need to change the "Who has access" setting if it's already "Anyone".
+  //
+  // 7. DEPLOY:
+  //    - Click "Deploy". The URL should stay the same.
   //
   // 8. UPDATE CLIENT-SIDE CODE:
-  //    - Paste the copied URL into the `SCRIPT_URL` constant at the top of the `services/googleSheetsService.ts` file in your application code, replacing the old one.
+  //    - Paste the copied URL into the `SCRIPT_URL` constant at the top of this file.
   // ============================================================================================
 
 
   // Handles CORS preflight requests from browsers. This is essential to prevent "Failed to fetch" errors.
   function doOptions(e) {
     return ContentService.createTextOutput()
-      .addHeader('Access-Control-Allow-Origin', '*')
-      .addHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-      .addHeader('Access-Control-Allow-Headers', 'Content-Type');
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+      .setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
 
   function doPost(e) {
     try {
-      // Use the ID of the specific spreadsheet you want to write to.
       var sheetId = '1WEe2msu4ivar8wQqpU0H7CxLKE7liqaBh4_6JnmxvsQ';
       var spreadsheet = SpreadsheetApp.openById(sheetId);
       var params = e.parameter;
@@ -137,37 +145,30 @@ export const logReport = async (category: string, description: string, hasImage:
         var chatSheet = spreadsheet.getSheetByName('ChatLogs');
         if (!chatSheet) {
           chatSheet = spreadsheet.insertSheet('ChatLogs');
-          // Set headers if the sheet is new
           chatSheet.appendRow(['Timestamp', 'Sender', 'Message']);
         }
-        // Append the new chat message
         chatSheet.appendRow([params.timestamp, params.sender, params.text]);
 
       } else if (action === 'logReport') {
         var reportSheet = spreadsheet.getSheetByName('Prijave');
         if (!reportSheet) {
           reportSheet = spreadsheet.insertSheet('Prijave');
-          // Set headers if the sheet is new
           reportSheet.appendRow(['Timestamp', 'Category', 'Description', 'Has Image']);
         }
-        // Append the new report
         reportSheet.appendRow([params.timestamp, params.category, params.description, params.hasImage]);
 
       } else {
-        // Handle unknown actions
         throw new Error("Invalid action parameter provided.");
       }
       
-      // Return a success response with CORS header
       return ContentService.createTextOutput(JSON.stringify({ 'status': 'success', 'action': action }))
         .setMimeType(ContentService.MimeType.JSON)
-        .addHeader('Access-Control-Allow-Origin', '*');
+        .setHeader('Access-Control-Allow-Origin', '*');
 
     } catch (error) {
-      // Return an error response with CORS header
       return ContentService.createTextOutput(JSON.stringify({ 'status': 'error', 'message': error.message }))
         .setMimeType(ContentService.MimeType.JSON)
-        .addHeader('Access-Control-Allow-Origin', '*');
+        .setHeader('Access-Control-Allow-Origin', '*');
     }
   }
 */

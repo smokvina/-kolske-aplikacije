@@ -46,10 +46,26 @@ export const getGroundedAnswer = async (query: string, useMaps: boolean = false,
     
     const text = response.text;
     const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
-    const sources: GroundingChunk[] = groundingMetadata?.groundingChunks?.map((chunk: GenAIGroundingChunk) => ({
-      web: chunk.web,
-      maps: chunk.maps
-    })) || [];
+    // FIX: Explicitly map grounding chunks to fix a type mismatch for `reviewSnippets`.
+    // The `@google/genai` library's types for review snippets are incompatible with the local types.
+    // This manual mapping ensures the data is correctly transformed from the API response structure
+    // (e.g., `review_text`) to the application's expected structure (`reviewText`).
+    const sources: GroundingChunk[] = groundingMetadata?.groundingChunks?.map((chunk: GenAIGroundingChunk): GroundingChunk => {
+      const anyChunk = chunk as any; // Cast to 'any' to safely access potentially mis-typed properties.
+      return {
+        web: anyChunk.web,
+        maps: anyChunk.maps ? {
+          uri: anyChunk.maps.uri,
+          title: anyChunk.maps.title,
+          placeAnswerSources: anyChunk.maps.placeAnswerSources ? {
+            reviewSnippets: anyChunk.maps.placeAnswerSources.reviewSnippets?.map((snippet: any) => ({
+              uri: snippet.uri,
+              reviewText: snippet.review_text, // Map from API's 'review_text' to local 'reviewText'.
+            })) || [],
+          } : undefined,
+        } : undefined,
+      };
+    }) || [];
     
     return { text, sources };
 
