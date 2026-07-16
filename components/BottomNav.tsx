@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Screen, NavItem } from '../types';
-import { HomeIcon, NewspaperIcon, CalendarIcon, ChatBubbleOvalLeftEllipsisIcon, DocumentPlusIcon } from './Icons';
+import { HomeIcon, NewspaperIcon, CalendarIcon, ChatBubbleOvalLeftEllipsisIcon, DocumentPlusIcon, BanknotesIcon } from './Icons';
 
 interface BottomNavProps {
   activeScreen: Screen;
@@ -13,6 +13,7 @@ const navItems: NavItem[] = [
   { screen: Screen.News, icon: NewspaperIcon },
   { screen: Screen.Chat, icon: ChatBubbleOvalLeftEllipsisIcon },
   { screen: Screen.Calendar, icon: CalendarIcon },
+  { screen: Screen.Billing, icon: BanknotesIcon },
   { screen: Screen.Report, icon: DocumentPlusIcon },
 ];
 

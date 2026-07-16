@@ -90,3 +90,9 @@ const TrafficConeIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.63 2.25c-2.59 1.9-3.72 4.9-3.72 8.25 0 3.35 1.13 6.35 3.72 8.25a14.98 14.98 0 005.96 2.25z" />
   </svg>
 );
+
+export const BanknotesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75h19.5m-18-9h16.5m-15 4.5h13.5M6 6.75h12a2.25 2.25 0 012.25 2.25v6A2.25 2.25 0 0118 17.25H6A2.25 2.25 0 013.75 15V9A2.25 2.25 0 016 6.75zm6 7.5a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
+  </svg>
+);

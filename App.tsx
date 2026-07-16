@@ -7,6 +7,7 @@ import ChatbotScreen from './screens/ChatbotScreen';
 import ReportScreen from './screens/ReportScreen';
 import InfoScreen from './screens/InfoScreen';
 import DocumentsScreen from './screens/DocumentsScreen';
+import BillingScreen from './screens/BillingScreen';
 import { Screen } from './types';
 
 // VAPID public key should be stored securely and retrieved from the server
@@ -42,6 +43,8 @@ const App: React.FC = () => {
         return <InfoScreen />;
       case Screen.Documents:
         return <DocumentsScreen />;
+      case Screen.Billing:
+        return <BillingScreen />;
       default:
         return <HomeScreen setActiveScreen={setActiveScreen} vapidPublicKey={VAPID_PUBLIC_KEY} />;
     }
