@@ -8,6 +8,7 @@ export enum Screen {
   Report = 'Prijava',
   Info = 'Info',
   Documents = 'Dokumenti',
+  Billing = 'Naplata',
 }
 
 export interface NavItem {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import { Screen } from '../types';
-import { NewspaperIcon, CalendarIcon, ChatBubbleOvalLeftEllipsisIcon, DocumentPlusIcon, InformationCircleIcon, BellIcon, DocumentTextIcon } from '../components/Icons';
+import { NewspaperIcon, CalendarIcon, ChatBubbleOvalLeftEllipsisIcon, DocumentPlusIcon, InformationCircleIcon, BellIcon, DocumentTextIcon, BanknotesIcon } from '../components/Icons';
 
 interface HomeScreenProps {
   setActiveScreen: (screen: Screen) => void;
@@ -32,6 +32,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActiveScreen, vapidPublicKey
     { name: Screen.News, icon: NewspaperIcon, description: "Najnovije vijesti i obavijesti" },
     { name: Screen.Calendar, icon: CalendarIcon, description: "Školski kalendar i događanja" },
     { name: Screen.Documents, icon: DocumentTextIcon, description: "Školski dokumenti i obrasci" },
+    { name: Screen.Billing, icon: BanknotesIcon, description: "Računi, uplate i potraživanja" },
     { name: Screen.Info, icon: InformationCircleIcon, description: "Kontakt i informacije o školi" },
   ];
 
